@@ -8,6 +8,17 @@
       zoom: 13,
       mapTypeId: 'roadmap'
     });
+	
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyD8MNJUAHQZ7k2b4eUWFE4pOnYC49g0p_8",
+    authDomain: "festi-ae1b5.firebaseapp.com",
+    databaseURL: "https://festi-ae1b5.firebaseio.com",
+    projectId: "festi-ae1b5",
+    storageBucket: "festi-ae1b5.appspot.com",
+    messagingSenderId: "824144688265"
+  };
+  firebase.initializeApp(config);
 
     // Create the search box and link it to the UI element.
     var input = document.getElementById('pac-input');
@@ -19,6 +30,10 @@
       searchBox.setBounds(map.getBounds());
     });
 
+	loadMarkers(map);
+	
+	//testMarkers(map);
+	
     var markers = [];
     // Listen for the event fired when the user selects a prediction and retrieve
     // more details for that place.
@@ -67,4 +82,39 @@
       });
       map.fitBounds(bounds);
     });
+ }
+ 
+ function loadMarkers(gmap) {
+  var dbRef = firebase.database().ref('posts');
+  dbRef.orderByValue().on("value", function(data) {
+	  data.forEach(function(data) {
+		  var postID = data.key;
+		  //initialize lanLng
+		  var latLng;
+		  dataRef = firebase.database().ref('posts/'+postID);
+		  
+		  var geoFire = new GeoFire(dataRef);
+		  geoFire.get("location").then(function(coords){
+			  if (coords === null){
+			  	log("no coordinates")
+			  }
+			  else{
+				  //latLng does not keep value outside of if statement
+				  latLng = {lat: coords[0],lng: coords[1]};
+				  var marker = new google.maps.Marker({
+				     position: latLng,
+				     map: gmap
+				  });
+			  }
+		  });
+	  });
+  });
+ }
+ 
+ function testMarkers(gmap){
+	var dinates = {lat: 39.228915, lng: -76.929057}
+ 	var testMarker = new google.maps.Marker({
+ 		position: dinates,
+ 		map: gmap
+ 	});
  }
