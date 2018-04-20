@@ -24,15 +24,19 @@
     var input = document.getElementById('pac-input');
     var searchBox = new google.maps.places.SearchBox(input);
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
+	
+	var uploadLocLat = map.getCenter().lat();
+	var uploadLocLng = map.getCenter().lng();
+	
+	var upload = document.getElementById('upload');
+	upload.onclick = function(){uploadData(uploadLocLat,uploadLocLng)};
+	
     // Bias the SearchBox results towards current map's viewport.
     map.addListener('bounds_changed', function() {
       searchBox.setBounds(map.getBounds());
     });
 
 	loadMarkers(map);
-	
-	//testMarkers(map);
 	
     var markers = [];
     // Listen for the event fired when the user selects a prediction and retrieve
@@ -72,7 +76,10 @@
           title: place.name,
           position: place.geometry.location
         }));
-
+		
+		uploadLocLat = place.geometry.location.lat();
+		uploadLocLng = place.geometry.location.lng();
+		
         if (place.geometry.viewport) {
           // Only geocodes have viewport.
           bounds.union(place.geometry.viewport);
@@ -96,7 +103,7 @@
 		  var geoFire = new GeoFire(dataRef);
 		  geoFire.get("location").then(function(coords){
 			  if (coords === null){
-			  	log("no coordinates")
+			  	console.log("no coordinates")
 			  }
 			  else{
 				  //latLng does not keep value outside of if statement
@@ -117,4 +124,25 @@
  		position: dinates,
  		map: gmap
  	});
+ }
+ 
+ function testPrint(latitude,longitude){
+ 	console.log(latitude+","+longitude)
+ }
+ 
+ function uploadData(latitude,longitude){
+ 	const newPostKey = firebase.database().ref('/posts').push().key;
+	const update = {}
+	var geoFire = new GeoFire(firebase.database().ref('posts/'+newPostKey));
+	
+	geoFire.set("location", [latitude,longitude]).then(function() {
+		  console.log("Provided key has been added to GeoFire");
+		}, function(error) {
+		  console.log("Error: " + error);
+	});
+	
+	update[newPostKey] = {
+		timestamp: firebase.database.ServerValue.TIMESTAMP
+	};
+	firebase.database().ref().child('posts').update(update);
  }
