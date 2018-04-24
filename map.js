@@ -29,7 +29,7 @@
 	var uploadLocLng = map.getCenter().lng();
 	
 	var upload = document.getElementById('upload');
-	upload.onclick = function(){uploadData(uploadLocLat,uploadLocLng)};
+	upload.onclick = function(){initModal()};
 	
     // Bias the SearchBox results towards current map's viewport.
     map.addListener('bounds_changed', function() {
@@ -132,8 +132,7 @@
  
  function uploadData(latitude,longitude){
  	const newPostKey = firebase.database().ref('/posts').push().key;
-	const update = {}
-	var geoFire = new GeoFire(firebase.database().ref('posts/'+newPostKey));
+	var geoFire = new GeoFire(firebase.database().ref().child('posts/'+newPostKey));
 	
 	geoFire.set("location", [latitude,longitude]).then(function() {
 		  console.log("Provided key has been added to GeoFire");
@@ -141,8 +140,9 @@
 		  console.log("Error: " + error);
 	});
 	
-	update[newPostKey] = {
+	 var update = {
 		timestamp: firebase.database.ServerValue.TIMESTAMP
 	};
-	firebase.database().ref().child('posts').update(update);
+	
+	firebase.database().ref().child('posts/'+newPostKey).update(update);
  }

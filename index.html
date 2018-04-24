@@ -5,14 +5,40 @@
     <meta charset="utf-8">
     <title>festie</title>
 	<script type="text/javascript" src="map.js"></script>
+	<script type="text/javascript" src="addEvent.js"></script>
+	<script type="text/javascript" src="selectDate.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1L-H3mxuWlpPB2hhvvaQRVucwrOqCFUQ&libraries=places&callback=initAutocomplete"
          async defer></script>
 	<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://cdn.firebase.com/libs/geofire/4.1.0/geofire.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="addEventModalStyle.css">
   </head>
   <body>
+	  
+	 <!-- --> <div id="mapModal" class="modal">
+
+	    <!-- Modal content -->
+	    <div class="modal-content">
+	      <span class="close">&times;</span>
+	      <p>Would you like to add an event at this location?</p>
+		 <div id="modalMap" style="width: 580px; height:400px"></div>
+		 <button id="mapConfirm" class="controls">Confirm location</button>
+	    </div>
+
+	  </div>
+	  
+ 	 <!-- --> <div id="calendarModal" class="modal">
+
+ 	    <!-- Modal content -->
+ 	    <div class="modal-content">
+ 	      <span class="close">&times;</span>
+ 	      <p>When is the event</p>
+ 	    </div>
+
+ 	  </div>
+	  
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
 	<center><button id="upload" class="controls">Add event</button></center>
 	<div id="map"></div>
